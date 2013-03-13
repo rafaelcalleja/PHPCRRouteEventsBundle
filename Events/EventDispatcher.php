@@ -8,6 +8,8 @@ use Doctrine\ODM\PHPCR\Event\MoveEventArgs;
 use RC\PHPCRRouteEventsBundle\Events\RouteDataEvent;
 use RC\PHPCRRouteEventsBundle\Events\RouteMoveEventsData;
 use RC\PHPCRRouteEventsBundle\Events\RouteEvents;
+use Doctrine\ODM\PHPCR\Event\PostFlushEventArgs;
+use Doctrine\ODM\PHPCR\Event\PreFlushEventArgs;
 
 class EventDispatcher
 {
@@ -55,6 +57,16 @@ class EventDispatcher
 			$this->dispatcher->dispatch(RouteEvents::ROUTE_EDITED, $newevent);
 		}
 	
-	}	
+	}
+
+	public function postFlush(PostFlushEventArgs $event){
+		//$event->getDocumentManager()->flush();
+		//var_dump(get_class($event));
+	}
+	
+	public function preFlush(PreFlushEventArgs $event){
+		$event->getDocumentManager()->getEventManager()->dispatchEvent('rc.preflush', $event);
+		//var_dump('prefl');
+	}
 	
 }
