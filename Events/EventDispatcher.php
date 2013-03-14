@@ -8,6 +8,7 @@ use Doctrine\ODM\PHPCR\Event\MoveEventArgs;
 use RC\PHPCRRouteEventsBundle\Events\RouteDataEvent;
 use RC\PHPCRRouteEventsBundle\Events\RouteMoveEventsData;
 use RC\PHPCRRouteEventsBundle\Events\RouteEvents;
+use RC\PHPCRRouteEventsBundle\Events\RouteFlushDataEvent;
 use Doctrine\ODM\PHPCR\Event\PostFlushEventArgs;
 use Doctrine\ODM\PHPCR\Event\PreFlushEventArgs;
 
@@ -58,5 +59,21 @@ class EventDispatcher
 		}
 	
 	}
+	
+	public function postFlush(PostFlushEventArgs $event){
+// 		$newevent = new RouteFlushDataEvent($event);
+// 		$this->dispatcher->dispatch(RouteEvents::ROUTE_POST_REMOVE, $newevent);
+			
+	}
+	
+	public function postRemove(LifecycleEventArgs $event){
+		$document = $event->getDocument();
+		if( $document instanceof \Symfony\Cmf\Bundle\RoutingExtraBundle\Document\Route){
+			$newevent = new RouteDataEvent($event);
+			$this->dispatcher->dispatch(RouteEvents::ROUTE_POST_REMOVE, $newevent);
+		}
+			
+	}
+	
 	
 }

@@ -56,4 +56,15 @@ final class RouteEvents{
 	 * @var string
 	 */
 	const ROUTE_PRE_MOVE = 'rc.route.pre.move';
+	
+	/**
+	 * El evento «rc.route.post.remove» es lanzado cada vez que se ha eliminado una ruta phpcr
+	 * en el sistema.
+	 *
+	 * El escucha del evento recibe una
+	 * instancia de RC\PHPCRRouteEventsBundle\Events\RouteFlushDataEvent.
+	 *
+	 * @var string
+	 */
+	const ROUTE_POST_REMOVE = 'rc.route.post.remove';
 }
