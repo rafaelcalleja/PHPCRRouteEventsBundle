@@ -12,52 +12,29 @@ class RouteFlushDataEvent extends Event
 	protected $updated;
 	protected $new;
 	protected $uow;
+	protected $document;
 	
 
-	public function __construct(PostFlushEventArgs $event){
+	public function __construct($event){
 		$this->dm = $event->getDocumentManager();
 		$this->uow = $this->dm->getUnitOfWork();
 		
-		$this->removed = $this->setRemoved();
-		$this->updated = $this->setUpdated();
-		$this->new = $this->setNew();
+		$this->setRemoved();
+// 		$this->updated = $this->setUpdated();
+// 		$this->new = $this->setNew();
+	}
+	public function getDocumentManager(){
+		return $this->dm;
 	}
 	
-	
-
 	public function setRemoved(){
-		   $removes = $this->uow->getScheduledRemovals();
-		   var_dump(count($removes));
-		   $this->removed = array();
-		   foreach ($removes as $document) {
-		   		var_dump('llego', get_class($removes));
-   	            if($document instanceof \Symfony\Cmf\Bundle\RoutingExtraBundle\Document\Route ){
-   	            	$this->removed[] = $document;
-   	            }
-   	        }
-		   
-
-//         $scheduledInserts = $uow->getScheduledInserts();
-//         $scheduledUpdates = $uow->getScheduledUpdates();
-//         $updates = array_merge($scheduledInserts, $scheduledUpdates);
-
-//         foreach ($updates as $document) {
-//             if ($this->getArm()->isAutoRouteable($document)) {
-//                 $route = $this->getArm()->updateAutoRouteForDocument($document);
-//                 $uow->computeSingleDocumentChangeSet($route);
-//             }
-//         }
-
-//         $removes = $uow->getScheduledRemovals();
-
-//         foreach ($removes as $document) {
-//             if ($this->getArm()->isAutoRouteable($document)) {
-//                 $routes = $this->getArm()->fetchAutoRoutesForDocument($document);
-//                 foreach ($routes as $route) {
-//                     $uow->scheduleRemove($route);
-//                 }
-//             }
-//         }
+		$removes = $this->uow->getScheduledRemovals();
+		$this->removed = array();
+		foreach ($removes as $document) {
+			if($document instanceof \Symfony\Cmf\Bundle\RoutingExtraBundle\Document\Route ){
+   	        	$this->removed[] = $document;
+			}
+		}
 	}
 	
 	public function setUpdated(){
