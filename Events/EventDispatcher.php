@@ -58,15 +58,5 @@ class EventDispatcher
 		}
 	
 	}
-
-	public function postFlush(PostFlushEventArgs $event){
-		//$event->getDocumentManager()->flush();
-		//var_dump(get_class($event));
-	}
-	
-	public function preFlush(PreFlushEventArgs $event){
-		$event->getDocumentManager()->getEventManager()->dispatchEvent('rc.preflush', $event);
-		//var_dump('prefl');
-	}
 	
 }
