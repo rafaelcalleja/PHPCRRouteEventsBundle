@@ -11,20 +11,29 @@ doctrine_phpcr:
         mappings:
             test:
                 type: annotation
-                prefix: Symfony\Cmf\Bundle\RoutingAutoRouteBundle\Tests\Functional\app\Document
+                prefix: RC\PHPCRRouteEventsBundle\Tests\Functional\Document
                 dir: %kernel.root_dir%/Document
                 is_bundle: false
         auto_generate_proxy_classes: %kernel.debug%
         locales:
             en:
                 - en
+                - es
                 - de
                 - fr
             de:
                 - de
+                - es
                 - en
                 - fr
             fr:
                 - fr
+                - es
                 - en
                 - de
+            es:
+                - es
+                - en
+                - de
+                - fr
+            
