@@ -12,13 +12,14 @@ class AppKernel extends Kernel
 
     public function __construct($config)
     {
+    
         parent::__construct('test', true);
 
         $fs = new Filesystem();
         if (!$fs->isAbsolutePath($config)) {
             $config = __DIR__.'/config/'.$config;
         }
-
+			
         if (!file_exists($config)) {
             throw new \RuntimeException(sprintf('The config file "%s" does not exist.', $config));
         }
@@ -34,6 +35,7 @@ class AppKernel extends Kernel
             new \Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new \Doctrine\Bundle\PHPCRBundle\DoctrinePHPCRBundle(),
             new \Symfony\Cmf\Bundle\RoutingExtraBundle\SymfonyCmfRoutingExtraBundle(),
+	    	new \RC\PHPCRRouteEventsBundle\RCPHPCRRouteEventsBundle(),
         );
     }
 
@@ -44,6 +46,6 @@ class AppKernel extends Kernel
 
     public function getCacheDir()
     {
-        return sys_get_temp_dir().'/SymfonyCmfRoutingExtraBundle';
+        return sys_get_temp_dir().'/PHPCRRouteEventsBundle';
     }
 }

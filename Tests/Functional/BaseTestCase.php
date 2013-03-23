@@ -2,44 +2,61 @@
 namespace RC\PHPCRRouteEventsBundle\Tests\Functional;
 
 require __DIR__.'/app/AppKernel.php';
+use Symfony\Cmf\Bundle\RoutingExtraBundle\Document\Route;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
+use RC\PHPCRRouteEventsBundle\Tests\Functional\AppKernel;
+
 class BaseTestCase extends WebTestCase
 {
-	static protected function createKernel(array $options = array())
-	{
-		return new AppKernel(
-				isset($options['config']) ? $options['config'] : 'default.yml'
-		);
-	}
+    /**
+     * @var \Doctrine\ODM\PHPCR\DocumentManager
+     */
+    protected static $dm;
+    protected static $kernel;
+    protected static $dispatcher;
 
-	public function getContainer()
-	{
-		return self::$kernel->getContainer();
-	}
+    protected static function createKernel(array $options = array())
+    {
+        return new AppKernel(
+            isset($options['config']) ? $options['config'] : 'default.yml'
+        );
+    }
 
-	public function getDm()
-	{
-		return $this->getContainer()->get('doctrine_phpcr.odm.document_manager');
-	}
+    /**
+     * careful: the kernel is shut down after the first test, if you need the
+     * kernel, recreate it.
+     *
+     * @param array  $options   passed to self:.createKernel
+     * @param string $routebase base name for routes under /test to use
+     */
+    public static function setupBeforeClass(array $options = array(), $routebase = null)
+    {
+        self::$kernel = self::createKernel($options);
+        self::$kernel->init();
+        self::$kernel->boot();
 
-	public function setUp(array $options = array(), $routebase = null)
-	{
-		self::$kernel = self::createKernel($options);
-		self::$kernel->init();
-		self::$kernel->boot();
+        self::$dm = self::$kernel->getContainer()->get('doctrine_phpcr.odm.document_manager');
+        self::$dispatcher = self::$kernel->getContainer()->get('event_dispatcher');
+        
+        if (null == $routebase) {
+            return;
+        }
 
-		$session = $this->getContainer()->get('doctrine_phpcr.session');
+        $session = self::$kernel->getContainer()->get('doctrine_phpcr.session');
+        if ($session->nodeExists("/test/$routebase")) {
+            $session->getNode("/test/$routebase")->remove();
+        }
+        if (! $session->nodeExists('/test')) {
+            $session->getRootNode()->addNode('test', 'nt:unstructured');
+        }
+        $session->save();
 
-		if ($session->nodeExists('/test')) {
-			$session->getNode('/test')->remove();
-		}
-
-		if (!$session->nodeExists('/test')) {
-			$session->getRootNode()->addNode('test', 'nt:unstructured');
-		}
-
-		$session->save();
-	}
+        $root = self::$dm->find(null, '/test');
+        $route = new Route;
+        $route->setPosition($root, $routebase);
+        self::$dm->persist($route);
+        self::$dm->flush();
+    }
 }

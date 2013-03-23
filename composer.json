@@ -24,6 +24,7 @@
         "jackalope/jackalope-doctrine-dbal": "1.0.*",
         "doctrine/phpcr-odm": "1.0.*",
         "doctrine/phpcr-bundle": "1.0.*",
+	"doctrine/common": "dev-master as 2.3.x-dev",
 	"symfony-cmf/routing-extra-bundle": "dev-master"
     },
     "autoload": {

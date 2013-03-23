@@ -9,6 +9,10 @@ parameters:
     phpcr_pass: admin
 
     database_driver: pdo_mysql
-    database_path: '%kernel.root_dir%/cache/app.sqlite'
+    database_host: localhost
+    database_port:     ~
+    database_name:     testroute
+    database_user:     root
+    database_password: 
 
     locale: en
