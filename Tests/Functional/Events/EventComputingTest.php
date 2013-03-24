@@ -76,7 +76,7 @@ class EventComputingTest extends BaseTestCase{
 		while(self::$listener->getContinue()){
 			$child = self::createRoute('computeOnMove'.$counter, self::$parent);
 			self::$dm->persist($child);
-			self::$dm->flush($child);
+			self::$dm->flush();
 			
 			self::$dm->move($child, '/test/routing/moved'.$counter);
 			self::$dm->flush($child);
@@ -171,7 +171,7 @@ class RouteListenerComputingEventTest  {
 			
 			
 		$event->persist($content);
-		$event->flush($content);
+		$event->flush();
 		$this->continue = false;
 	
 		$this->last_event =  $event;

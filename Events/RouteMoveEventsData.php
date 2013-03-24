@@ -24,4 +24,12 @@ class RouteMoveEventsData extends RouteDataEvent
 	public function getDest(){
 		return $this->dest;
 	}
+	
+	public function persist($document){
+		$this->dm->persist($document);
+	}
+	
+	public function flush($document = null){
+		$this->dm->flush($document);
+	}
 }
