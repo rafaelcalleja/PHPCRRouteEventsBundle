@@ -11,8 +11,7 @@ use Doctrine\ODM\PHPCR\Event\LifecycleEventArgs;
 
 use Symfony\Cmf\Bundle\RoutingExtraBundle\Document\Route;
 
-class RouteMoveEventsDataTest extends BaseTestCase{
-	
+class RouteFlushDataEventTest extends BaseTestCase{
 	
 	public static function setupBeforeClass(array $options = array(), $routebase = null){
 		
@@ -34,46 +33,44 @@ class RouteMoveEventsDataTest extends BaseTestCase{
 	protected function setUp(){
 		self::$listener = new RouteListenerTestEvent();
 		self::$dispatcher->addListener(RouteEvents::ROUTE_ADDED, array(self::$listener, 'onRouteAdded'));
-		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved'));
+		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_MOVE, array(self::$listener, 'onRouteMoved'));
 	}
 	
 	
-	public function testTotalGetRemoved(){
-		$child = self::createRoute('delete1', self::$parent);
+	public function testSource(){
+		$child = self::createRoute('imsource', self::$parent);
 		self::$dm->persist($child);
 		self::$dm->flush();
 			
-		self::$dm->remove($child);
+		self::$dm->move($child, '/test/routing/imdest');
 		self::$dm->flush();
+		
 		
 		$event = self::$listener->getEvent();
-		$total = count($event->getRemoved());
-		
-		$this->assertEquals(1, $total);
-		
-		$toremove = array();
-		for($x=2;$x<=6;$x++){
-			$child = self::createRoute('delete'.$x, self::$parent);
-			self::$dm->persist($child);
-			$toremove[] = $child;
-		}
-		self::$dm->flush();
-		
-		foreach($toremove as $d){
-			self::$dm->remove($d);
-		}
-		
-		self::$dm->flush();
-		$event = self::$listener->getEvent();
-		
-		$total = count($event->getRemoved());
-		$this->assertEquals(count($toremove), $total);
-		
+		$this->assertEquals('/test/routing/testroute/imsource', $event->getSource());
 	}
 	
+	
+	public function testDest(){
+		$child = self::createRoute('imsource2', self::$parent);
+		self::$dm->persist($child);
+		self::$dm->flush();
+			
+		self::$dm->move($child, '/test/routing/imdest2');
+		self::$dm->flush();
+		
+		
+		$event = self::$listener->getEvent();
+		$this->assertEquals('/test/routing/imdest2', $event->getDest());
+	
+	}
+	
+	
+	
+	
 }
-
-
-
-
-
+	
+	
+	
+	
+	

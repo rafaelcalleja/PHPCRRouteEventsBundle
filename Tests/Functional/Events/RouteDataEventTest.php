@@ -3,9 +3,7 @@ namespace RC\PHPCRRouteEventsBundle\Tests\Functional\Events;
 
 use RC\PHPCRRouteEventsBundle\Events\RouteEvents;
 
-use RC\PHPCRRouteEventsBundle\Events\EventDispatcher;
 use RC\PHPCRRouteEventsBundle\Tests\Functional\BaseTestCase;
-use RC\PHPCRRouteEventsBundle\Tests\Functional\Document\DocumentContentTest;
 use RC\PHPCRRouteEventsBundle\Tests\Functional\Listener\RouteListenerTestEvent;
 
 
@@ -14,12 +12,6 @@ use Doctrine\ODM\PHPCR\Event\LifecycleEventArgs;
 use Symfony\Cmf\Bundle\RoutingExtraBundle\Document\Route;
 
 class RouteDataEventTest extends BaseTestCase{
-	
-	protected static $root;
-	protected static $parent;
-	protected static $listener;
-	
-	const ROUTE_ROOT = '/test/routing';
 	
 	public static function setupBeforeClass(array $options = array(), $routebase = null){
 		
@@ -42,24 +34,6 @@ class RouteDataEventTest extends BaseTestCase{
 		self::$listener = new RouteListenerTestEvent();
 		self::$dispatcher->addListener(RouteEvents::ROUTE_ADDED, array(self::$listener, 'onRouteAdded'));
 	}
-	
-	protected static function  createRoute($name, $parent, $locale = 'es'){
-		$route = new Route;
-		$route->setPosition($parent, $name);
-		$route->setDefault('_locale', $locale);
-		return $route;
-	}
-	
-	protected static function  createContent($name, $title){
-		$content = new DocumentContentTest();
-		$content->setNodename($name);
-		$content->setParent(self::$root);
-		$content->setTitle($title);
-		
-		return $content;
-	}
-	
-		
 	
 	
 	public function testGetLocale(){

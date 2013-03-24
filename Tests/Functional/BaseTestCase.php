@@ -7,6 +7,7 @@ use Symfony\Cmf\Bundle\RoutingExtraBundle\Document\Route;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 use RC\PHPCRRouteEventsBundle\Tests\Functional\AppKernel;
+use RC\PHPCRRouteEventsBundle\Tests\Functional\Document\DocumentContentTest;
 
 class BaseTestCase extends WebTestCase
 {
@@ -16,6 +17,12 @@ class BaseTestCase extends WebTestCase
     protected static $dm;
     protected static $kernel;
     protected static $dispatcher;
+    
+    protected static $root;
+    protected static $parent;
+    protected static $listener;
+    
+    const ROUTE_ROOT = '/test/routing';
 
     protected static function createKernel(array $options = array())
     {
@@ -59,4 +66,20 @@ class BaseTestCase extends WebTestCase
         self::$dm->persist($route);
         self::$dm->flush();
     }
+    
+    protected static function  createRoute($name, $parent, $locale = 'es'){
+    	$route = new Route;
+    	$route->setPosition($parent, $name);
+    	$route->setDefault('_locale', $locale);
+    	return $route;
+    }
+    
+    protected static function  createContent($name, $title){
+    	$content = new DocumentContentTest();
+    	$content->setNodename($name);
+    	$content->setParent(self::$root);
+    	$content->setTitle($title);
+    	return $content;
+    }
+    
 }
