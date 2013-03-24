@@ -57,4 +57,19 @@ class RouteFlushDataEvent extends Event
 	public function getNew(){
 		
 	}
+	
+	public function insert($document){
+		$this->uow->scheduleInsert($document);
+		//$this->uow->computeSingleDocumentChangeSet($document);
+	}
+	
+	public function persist($document){
+		$this->dm->persist($document);
+		$this->uow->computeSingleDocumentChangeSet($document);
+	}
+	
+	public function flush($document){
+		$this->uow->initializeObject($document);
+		$this->persist($document);
+	}
 }

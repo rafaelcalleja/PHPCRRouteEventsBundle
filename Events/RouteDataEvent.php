@@ -52,6 +52,7 @@ class RouteDataEvent extends Event
 	public function persist($document){
 		$this->dm->persist($document);
 		$this->uow->computeSingleDocumentChangeSet($document);
+		
 	}
 	
 	public function flush($document){

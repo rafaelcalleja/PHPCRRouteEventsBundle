@@ -37,7 +37,10 @@ class EventComputingTest extends BaseTestCase{
 		self::$dispatcher->addListener(RouteEvents::ROUTE_ADDED, array(self::$listener, 'onRouteAddedDM'));
 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_MOVE, array(self::$listener, 'onRouteMoved'));
 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_MOVE, array(self::$listener, 'onRouteMoved2'));
+		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_MOVE, array(self::$listener, 'onRouteMoved3'));
 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved'));
+// 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved2'));
+// 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved3'));
 	}
 	
 	
@@ -62,6 +65,8 @@ class EventComputingTest extends BaseTestCase{
 			
 		$event = self::$listener->getEvent();
 		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelEN2')->getTitle(), 'testcomputing2');
+		
+	
 		
 	}
 	
@@ -90,6 +95,40 @@ class EventComputingTest extends BaseTestCase{
 			
  		$event = self::$listener->getEvent();
  		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelMovingEN2')->getTitle(), 'testMoving2Listener');
+ 		
+ 		$event = self::$listener->getEvent();
+ 		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelMovingEN3')->getTitle(), 'testMoving3Listener');
+	
+	}
+	
+	public function testUsingDMDuringChangesRemoved(){
+	
+		self::$listener->setContinue(true);
+		self::$listener->setDm(self::$dm);
+		self::$listener->setContent($this->createContent('contentlabelMovingEN', ''));
+	
+	
+		$counter = 0;
+		while(self::$listener->getContinue()){
+			$child = self::createRoute('computeOnRemove'.$counter, self::$parent);
+			self::$dm->persist($child);
+			self::$dm->flush();
+				
+			self::$dm->remove($child);
+			self::$dm->flush();
+				
+			$counter++;
+		}
+	
+		$event = self::$listener->getEvent();
+		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelRemovingEN')->getTitle(), 'testRemoving1Listener');
+	
+			
+// 		$event = self::$listener->getEvent();
+// 		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelRemovingEN2')->getTitle(), 'testRemoving2Listener');
+			
+// 		$event = self::$listener->getEvent();
+// 		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelRemovingEN3')->getTitle(), 'testRemoving3Listener');
 	
 	}
 	
@@ -176,8 +215,57 @@ class RouteListenerComputingEventTest  {
 	
 		$this->last_event =  $event;
 	}
+	
+	public function onRouteMoved3(RouteMoveEventsData $event){
+		$content = clone $this->content;
+		$content->setTitle('testMoving3Listener');
+		$content->setNodename('contentlabelMovingEN3');
+			
+			
+		$event->persist($content);
+		$event->flush();
+		$this->continue = false;
+	
+		$this->last_event =  $event;
+	}
 
 	public function onRouteRemoved(RouteFlushDataEvent $event){
+		$content = clone $this->content;
+		$content->setTitle('testRemoving1Listener');
+		$content->setNodename('contentlabelRemovingEN');
+			
+		//$event->insert($content);	
+		$event->persist($content);
+		$event->flush($content);
+		$event->stopPropagation();
+		$this->continue = false;
+		
+		$this->last_event =  $event;
+	}
+	
+	public function onRouteRemoved2(RouteFlushDataEvent $event){
+		$content = clone $this->content;
+		$content->setTitle('testRemoving2Listener');
+		$content->setNodename('contentlabelRemovingEN2');
+			
+			
+		$event->persist($content);
+		$event->flush($content);
+		$this->continue = false;
+	
+		$this->last_event =  $event;
+	}
+	
+	public function onRouteRemoved3(RouteFlushDataEvent $event){
+		$content = clone $this->content;
+		$content->setTitle('testRemoving3Listener');
+		$content->setNodename('contentlabelRemovingEN3');
+			
+			
+		$event->persist($content);
+		$event->flush($content);
+		$this->continue = false;
+	
 		$this->last_event =  $event;
 	}
 
