@@ -17,6 +17,11 @@ class RouteDataEvent extends Event
 		$this->clone->setLocaleChooserStrategy($this->dm->getLocaleChooserStrategy());
 	}
 	
+	
+	public function getPosition(){
+		return array_search($this->document->getName(), $this->dm->getPhpcrSession()->getNode($this->document->getParent()->getId())->getNodeNames()->getArrayCopy() );
+	}
+	
 	public function cloneDocumentManager(){
 		return $this->clone;
 	}
