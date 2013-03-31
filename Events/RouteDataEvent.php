@@ -7,6 +7,7 @@ use Doctrine\ODM\PHPCR\Event\LifecycleEventArgs;
 class RouteDataEvent extends Event
 {
 	protected $document, $dm, $clone, $uow;
+	protected $contentId = false;
 	
 
 	public function __construct($event){
@@ -15,6 +16,15 @@ class RouteDataEvent extends Event
 		$this->uow = $this->dm->getUnitOfWork();
 		$this->clone = $this->dm->create($this->dm->getPhpcrSession(), $this->dm->getConfiguration(), $this->dm->getEventManager());
 		$this->clone->setLocaleChooserStrategy($this->dm->getLocaleChooserStrategy());
+		$this->setId($event);
+	}
+	
+	protected function setId($event){
+		if($this->document->getRouteContent()){
+			$this->dm->refresh($this->document->getRouteContent());
+			$class = $this->dm->getClassMetadata(get_class($this->document->getRouteContent()));
+			$this->contentId = 'get'.ucfirst(current($class->getIdentifier())); 
+		}
 	}
 	
 	
@@ -44,10 +54,13 @@ class RouteDataEvent extends Event
 	}
 	
 	public function getLabel(){
-		if((method_exists($this->document->getRouteContent(), 'getId'))){
-			$translation = $this->dm->findTranslation(get_class($this->document->getRouteContent()), $this->document->getRouteContent()->getId(), $this->getLocale());
+		
+		if($this->contentId){
+			$translation = $this->dm->findTranslation(get_class($this->document->getRouteContent()), $this->document->getRouteContent()->{$this->contentId}(), $this->getLocale());
 			if(method_exists($translation, 'getTitle')) {
 				return $translation->getTitle();
+			}elseif(method_exists($translation, 'getName')) {
+				return $translation->getName();
 			}
 		}
 		
