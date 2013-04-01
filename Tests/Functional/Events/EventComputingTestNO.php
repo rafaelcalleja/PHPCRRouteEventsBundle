@@ -39,8 +39,8 @@ class EventComputingTest extends BaseTestCase{
 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_MOVE, array(self::$listener, 'onRouteMoved2'));
 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_MOVE, array(self::$listener, 'onRouteMoved3'));
 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved'));
-// 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved2'));
-// 		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved3'));
+		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved2'));
+		self::$dispatcher->addListener(RouteEvents::ROUTE_POST_REMOVE, array(self::$listener, 'onRouteRemoved3'));
 	}
 	
 	
@@ -124,11 +124,11 @@ class EventComputingTest extends BaseTestCase{
 		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelRemovingEN')->getTitle(), 'testRemoving1Listener');
 	
 			
-// 		$event = self::$listener->getEvent();
-// 		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelRemovingEN2')->getTitle(), 'testRemoving2Listener');
+		$event = self::$listener->getEvent();
+		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelRemovingEN2')->getTitle(), 'testRemoving2Listener');
 			
-// 		$event = self::$listener->getEvent();
-// 		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelRemovingEN3')->getTitle(), 'testRemoving3Listener');
+		$event = self::$listener->getEvent();
+		$this->assertEquals(self::$dm->find(null, '/test/routing/contentlabelRemovingEN3')->getTitle(), 'testRemoving3Listener');
 	
 	}
 	
@@ -210,7 +210,7 @@ class RouteListenerComputingEventTest  {
 			
 			
 		$event->persist($content);
-		$event->flush();
+		$event->flush($content);
 		$this->continue = false;
 	
 		$this->last_event =  $event;
@@ -237,7 +237,7 @@ class RouteListenerComputingEventTest  {
 		//$event->insert($content);	
 		$event->persist($content);
 		$event->flush($content);
-		$event->stopPropagation();
+		//$event->stopPropagation();
 		$this->continue = false;
 		
 		$this->last_event =  $event;

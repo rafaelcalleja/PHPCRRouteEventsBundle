@@ -14,6 +14,9 @@ class DocumentContentTest extends Generic {
 	/** @PHPCRODM\String(translated=true) */
 	protected $title;
 	
+	/** @PHPCRODM\Locale*/
+	protected $locale;
+	
 	public function __construct(){
 
 	}
@@ -27,8 +30,13 @@ class DocumentContentTest extends Generic {
 		$this->title = $value;
 	}
 	
-	/** @PHPCRODM\Locale*/
-	protected $locale;
+	public function getLocale(){
+		return $this->locale;
+	}
+	
+	public function setLocale($locale){
+		$this->locale = $locale;
+	}
 	
 
 }
