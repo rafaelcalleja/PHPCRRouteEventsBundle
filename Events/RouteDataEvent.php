@@ -21,7 +21,6 @@ class RouteDataEvent extends Event
 	
 	protected function setId($event){
 		if($this->document->getRouteContent()){
-			$this->dm->refresh($this->document->getRouteContent());
 			$class = $this->dm->getClassMetadata(get_class($this->document->getRouteContent()));
 			$this->contentId = 'get'.ucfirst(current($class->getIdentifier())); 
 		}
